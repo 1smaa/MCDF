@@ -3,20 +3,18 @@ import matplotlib.pyplot as plt
 import scipy
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from scipy.sparse.linalg import LinearOperator,eigsh
 # Alberto ha l'oscilloscopio
 
 from src.utils import Operators
 
 #minimize(...,method="cg")
 
-N=25
-PSI_START=np.random.rand(N**2)
-PSI_START/=np.linalg.norm(PSI_START)
-LAMBDA_START=1
+N=20
 
 L=40
 H=L/N
+EIGEN_N=10
 
 def orthogonalize(psi, previous_states):
     for phi in previous_states:
@@ -28,14 +26,22 @@ def orthogonalize(psi, previous_states):
 def energy_functional(psi: np.ndarray,H: np.ndarray,states: list[np.ndarray]) -> np.ndarray:
     psi/=np.linalg.norm(psi)
     psi=orthogonalize(psi,states)
-    energy=(psi.conj())@H@psi
+    energy=np.vdot(psi, H.dot(psi))
     return energy
 
 def main() -> None:
     states=[]
-    for _ in range(5):
-        h=Operators.H(N,H,Operators.V)
-        sol=minimize(lambda x:energy_functional(x,h,states),PSI_START,method="CG")
+    h=Operators.H_sparse(N,H,Operators.V)
+    vals, vecs = eigsh(h, k=5, which='SM')
+    print(f"Double check eigenvalues: {vals}")
+    for _ in range(EIGEN_N):
+        psi_start = np.random.rand(N**2)
+        psi_start /= np.linalg.norm(psi_start)
+        h=Operators.H_sparse(N,H,Operators.V)
+        def matvec(psi):
+            return h.dot(psi)
+        H_op = LinearOperator((h.shape[0], h.shape[0]), matvec=matvec)
+        sol=minimize(lambda x:energy_functional(x,H_op,states),psi_start,method="CG",options={"disp":False})
         minimum=orthogonalize(sol.x,states)
         if len(states): print(f"Overlap {max([np.vdot(minimum,state) for state in states])}")
         else: pass
