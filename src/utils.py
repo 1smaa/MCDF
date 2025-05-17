@@ -5,14 +5,9 @@ from scipy.sparse import lil_matrix, csr_matrix
 
 class Operators(object):
     @staticmethod
-    def A(H: np.ndarray,lam: float) -> np.ndarray:
-        return H-lam*np.identity(H.shape[0])
-        
-    @staticmethod
     def V(x: float,y: float,h: float) -> float:
         x,y=x*h,y*h
         L=5
-        return 0
         if x<L: return 10
         else: return 0
     
@@ -40,29 +35,19 @@ class Operators(object):
         return hamil
     
     @staticmethod
-    def H_sparse(n: int, h: float, V: Callable) -> csr_matrix:
-        size = n ** 2
-        hsq = h ** 2
-        H = lil_matrix((size, size))  # Start with LIL for easy assignment
-
+    def H_sparse(n:int,h:float,V:Callable)->csr_matrix:
+        size=n**2
+        hsq=h**2
+        H=lil_matrix((size,size))  # Start with LIL for easy assignment
         for i in range(size):
-            x, y = Operators.l_to_coord(n, i)
+            x,y=Operators.l_to_coord(n,i)
+            H[i,i]=4/hsq+V(x,y,h)
+            H[i,(i-1)%size]=-1/hsq
+            H[i,(i+1)%size]=-1/hsq
+            H[i,(i+n)%size]=-1/hsq
+            H[i,(i-n)%size]=-1/hsq
+        return H.tocsr()
 
-            # Diagonal (kinetic + potential)
-            H[i, i] = 4 / hsq + V(x, y, h)
-
-            # Nearest neighbors with periodic BCs
-            # Left (wrap x-1 if at boundary)
-            H[i, (i - 1) % size] = -1 / hsq if (i % n) != 0 else -1 / hsq
-            # Right
-            H[i, (i + 1) % size] = -1 / hsq if (i % n) != (n - 1) else -1 / hsq
-            # Up (wrap y+1)
-            H[i, (i + n) % size] = -1 / hsq
-            # Down
-            H[i, (i - n) % size] = -1 / hsq
-
-        return 2*H.tocsr()
-    
     @staticmethod
     def G(H: np.ndarray,lam: float) -> np.ndarray:
         return -Operators.A(H,lam)
