@@ -33,20 +33,6 @@ class Operators(object):
             hamil[i][(i+n)%size]=-1/hsq
             hamil[i][(i-n)%size]=-1/hsq
         return hamil
-    
-    @staticmethod
-    def H_sparse(n:int,h:float,V:Callable)->csr_matrix:
-        size=n**2
-        hsq=h**2
-        H=lil_matrix((size,size))  # Start with LIL for easy assignment
-        for i in range(size):
-            x,y=Operators.l_to_coord(n,i)
-            H[i,i]=4/hsq+V(x,y,h)
-            H[i,(i-1)%size]=-1/hsq
-            H[i,(i+1)%size]=-1/hsq
-            H[i,(i+n)%size]=-1/hsq
-            H[i,(i-n)%size]=-1/hsq
-        return H.tocsr()
 
     @staticmethod
     def G(H: np.ndarray,lam: float) -> np.ndarray:

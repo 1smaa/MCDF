@@ -23,16 +23,15 @@ def orthogonalize(psi, previous_states):
 
 
 def energy_functional(psi: np.ndarray,H: LinearOperator,states: list[np.ndarray]) -> np.ndarray:
-    psi/=np.linalg.norm(psi)
     psi=orthogonalize(psi,states)
     energy=np.vdot(psi, H.dot(psi))
     return energy
 
 def main() -> None:
     states=[]
-    h=Operators.H_sparse(N,H,Operators.V)
-    vals, vecs = eigsh(h, k=5, which='SM')
-    print(f"Double check eigenvalues: {vals}")
+    h=Operators.H(N,H,Operators.V)
+    #vals, vecs = eigsh(h, k=5, which='SM')
+    #print(f"Double check eigenvalues: {vals}")
     for i in range(EIGEN_N):
         psi_start = np.random.rand(N**2)
         psi_start /= np.linalg.norm(psi_start)
