@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-from scipy.sparse.linalg import LinearOperator,eigsh
 # Alberto ha l'oscilloscopio
 
 from src.utils import Operators
