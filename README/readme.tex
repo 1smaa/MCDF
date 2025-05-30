@@ -1,0 +1,45 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{braket}
+
+\title{Metodi Computazionali della Fisica\\Università degli Studi di Padova}
+\author{Ismaele Lorenzon}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section{Introduzione}
+Il progetto si pone come base della prova orale per l'esame di Metodi Computazionali della Fisica, facente rifarimento al dipartimento e in particolare al corso 
+triennale in fisica presso l'Università degli Studi di Padova.
+\subsection{Consegna}
+\begin{center}
+\begin{quote}
+7. Equazione di Schroedinger tempo-indipendente 2D uso dell’algoritmo di 
+minimizzazione come  CG (gradiente coniugato) implementati in \texttt{scipy} per trovare lo 
+stato fondamentale e i primi stati eccitati. Consideriamo un potenziale a gradino e 
+condizioni al contorno periodiche. 
+\end{quote}
+\end{center}
+\subsection{Obiettivo}
+L'obiettivo evidente è la risoluzione dell'equazione degli autovalori per l'Hamiltoniana, nel contesto dell'equazione di Schroedinger bidimensionale. La consegna non 
+lo rende esplicito ma si rende noto vengano richiesti sia gli autostati che gli autovalori.
+\begin{equation}
+    \hat{H}\ket{\psi}=E\ket{\psi}
+\end{equation}
+Dove con $\psi$ indichiamo l'autostato e con $E$ l'energia ad esso associato.
+\section{Implementazione Numerica dell'Hamiltoniana}
+L'Hamiltoniana associata al problema in questione, è generalmente:
+\begin{equation}
+    \hat{H} = -\frac{\hbar^2}{2m} \nabla^2 + V(x,y) = -\frac{\hbar^2}{2m} \left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}\right) + V(x,y)
+\end{equation}
+Il problema viene poi numericamente semplificato tramite la scelta di costanti naturali (o atomiche) adimensionali cioè
+\begin{equation}
+    \hbar=1 \hspace{10pt} m=1
+\end{equation}
+da cui le energie risultanti associate agli autostati saranno in Hartree ($\approx 27.2eV$). \\ Considereremo un dominio rettangolare, di dimensioni 
+$L_x,L_y$ e discretizzato lungo ciascuna delle dimensioni in $N_x,N_y$ segmenti di lunghezza $h_x,h_y$. Indicheremo poi con $\psi_{i,j}$ l'elemento dell'autostato 
+rappresentato da un vettore di lunghezza $N_x * N_y$, atto ad "appiattire" il dominio, corrispondente alle coordinate $x=i*h_x,y=j*h_y$.
+\end{document}
