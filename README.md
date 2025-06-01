@@ -82,10 +82,10 @@ def H(nx: int, ny: int, hx: float, hy: float, V: Callable) -> np.ndarray:
     hsqy = hy ** 2
     for i in range(0, size):
         hamil[i][i] = (1/hsqx + 1/hsqy + V(*Operators.l_to_coord(nx, ny, i), hx, hy))
-        hamil[i][(i - 1) % size] = -1 / (2 * hsqx)
-        hamil[i][(i + 1) % size] = -1 / (2 * hsqx)
-        hamil[i][(i + nx) % size] = -1 / (2 * hsqy)
-        hamil[i][(i - nx) % size] = -1 / (2 * hsqy)
+        hamil[i][Operators.coord_to_l(nx,(x+1)%nx,y)]=-1/(2*hsqx) #Condizioni periodiche sulle x
+        hamil[i][Operators.coord_to_l(nx,(x-1)%nx,y)]=-1/(2*hsqx)
+        hamil[i][Operators.coord_to_l(nx,x,(y+1)%ny)]=-1/(2*hsqy) #Condizioni periodiche sulle y
+        hamil[i][Operators.coord_to_l(nx,x,(y-1)%ny)]=-1/(2*hsqy)
     return hamil
 ```
 
