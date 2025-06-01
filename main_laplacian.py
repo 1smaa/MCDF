@@ -41,7 +41,7 @@ def main() -> None:
     for i in range(EIGEN_N): #Per i primi EIGEN_N autovalori richiesti
         psi_start = np.random.rand(NX*NY) #Crea uno stato random da cui partire
         psi_start /= np.linalg.norm(psi_start) #Normalizzalo
-        lam=1
+        lam=0
         sol=minimize(lambda x:energy_functional(x,h,states), #funzione da minimizzare (si può fare anche passando gli argomenti, forse più ottimale in stack size, da vedere)
                      x0=np.append(psi_start,lam), #Stato di partenza
                      method="CG", #Metodo del Gradiente Coniugato

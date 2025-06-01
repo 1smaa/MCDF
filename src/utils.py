@@ -40,7 +40,7 @@ class Operators(object):
         hsqy=hy**2
         for i in range(0,size):
             x,y=Operators.l_to_coord(nx,ny,i)
-            hamil[i][i]=(1/hsqx+1/hsqy+V(*Operators.l_to_coord(nx,ny,i),hx,hy)) #Sulla diagonale, potenziale calcolato in base ovviamente alla posizione
+            hamil[i][i]=(+1/hsqx+1/hsqy+V(*Operators.l_to_coord(nx,ny,i),hx,hy)) #Sulla diagonale, potenziale calcolato in base ovviamente alla posizione
             hamil[i][Operators.coord_to_l(nx,(x+1)%nx,y)]=-1/(2*hsqx) #Condizioni periodiche sulle x
             hamil[i][Operators.coord_to_l(nx,(x-1)%nx,y)]=-1/(2*hsqx)
             hamil[i][Operators.coord_to_l(nx,x,(y+1)%ny)]=-1/(2*hsqy) #Condizioni periodiche sulle y

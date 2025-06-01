@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
+from scipy.sparse.linalg import eigsh
 # Alberto ha l'oscilloscopio
 
 from src.utils import Operators
@@ -11,7 +12,7 @@ LX=40
 LY=160
 HX=LX/NX
 HY=LY/NY
-EIGEN_N=15
+EIGEN_N=10
 
 def orthogonalize(psi, previous_states): 
     '''
@@ -35,8 +36,8 @@ def main() -> None:
     states=[] #Record degli stati passati (per essere ortogonali agli stati precedenti)
     eigvals=[]
     h=Operators.H(NX,NY,HX,HY,Operators.V) #Operatore Hamiltoniano
-    #vals, vecs = eigsh(h, k=5, which='SM')
-    #print(f"Double check eigenvalues: {vals}")
+    vals, vecs = eigsh(h, k=EIGEN_N, which='SM')
+    print(f"Double Check Eigenvlaues: {' '.join([str(round(eigval,3)) for eigval in vals])}")
     for i in range(EIGEN_N): #Per i primi EIGEN_N autovalori richiesti
         psi_start = np.random.rand(NX*NY) #Crea uno stato random da cui partire
         psi_start /= np.linalg.norm(psi_start) #Normalizzalo
@@ -47,7 +48,7 @@ def main() -> None:
                     ) 
         #if len(states): print(f"Overlap {max([np.vdot(minimum,state) for state in states])}") #Pezzo tolto per verificare che effettivamente fosse ortogonale
         #else: pass
-        sol.x/=np.linalg.norm(sol.x)
+        sol.x=orthogonalize(sol.x,states)
         states.append(sol.x) #Aggiungi al record di stati passati quello calcolato
         energy=sol.fun
         fig=plt.figure()
@@ -62,7 +63,7 @@ def main() -> None:
         ax.plot_surface(X,Y,psi_matrix.T,cmap="viridis") #Plot dell'autostato
         plt.show()
         eigvals.append(energy)
-        print(eigvals)
+    print(f"Eigenvlaues: {' '.join([str(round(eigval,3)) for eigval in eigvals])}")
         
 
 if __name__=="__main__":
