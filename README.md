@@ -96,8 +96,8 @@ def H(nx: int, ny: int, hx: float, hy: float, V: Callable) -> np.ndarray:
 Il problema degli autovalori viene risolto tramite minimizzazione del funzionale di energia:
 
 ```math
-\newcommand{\ket}[1]{|#1\rangle}
-\newcommand{\bra}[1]{\langle #1|}
+\newcommand{\ket}[1]{\vert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\vert}
 E(\ket{\psi}) = \bra{\psi} H \ket{\psi} - \lambda(\langle \psi|\psi \rangle - 1)
 ```
 
@@ -106,8 +106,8 @@ dove $\lambda$ è il moltiplicatore di Lagrange che impone la normalizzazione $\
 Dalle condizioni di minimo:
 
 ```math
-\newcommand{\ket}[1]{|#1\rangle}
-\newcommand{\bra}[1]{\langle #1|}
+\newcommand{\ket}[1]{\vert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\vert}
 \frac{\partial E(\ket{\psi})}{\partial \bra{\psi}} = 0 \Rightarrow H\ket{\psi} = \lambda \ket{\psi}
 ```
 
