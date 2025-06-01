@@ -4,6 +4,21 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{braket}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  stringstyle=\color{orange},
+  commentstyle=\color{gray},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  mathescape=true,
+  literate={_}{}{0\discretionary{}{}{}} ,
+}
 
 \title{Metodi Computazionali della Fisica\\Università degli Studi di Padova}
 \author{Ismaele Lorenzon}
@@ -12,34 +27,89 @@
 \maketitle
 
 \section{Introduzione}
-Il progetto si pone come base della prova orale per l'esame di Metodi Computazionali della Fisica, facente rifarimento al dipartimento e in particolare al corso 
-triennale in fisica presso l'Università degli Studi di Padova.
+Il progetto rappresenta la base della prova orale per l'esame di Metodi Computazionali della Fisica, riferito al Dipartimento di Fisica e in particolare al corso di laurea triennale in Fisica presso l'Università degli Studi di Padova.
+
 \subsection{Consegna}
 \begin{center}
 \begin{quote}
-7. Equazione di Schroedinger tempo-indipendente 2D uso dell’algoritmo di 
-minimizzazione come  CG (gradiente coniugato) implementati in \texttt{scipy} per trovare lo 
-stato fondamentale e i primi stati eccitati. Consideriamo un potenziale a gradino e 
+7. Equazione di Schrödinger tempo-indipendente 2D: utilizzo di un algoritmo di 
+minimizzazione, come il CG (gradiente coniugato), implementato in \texttt{scipy}, per trovare lo 
+stato fondamentale e i primi stati eccitati. Si consideri un potenziale a gradino e 
 condizioni al contorno periodiche. 
 \end{quote}
 \end{center}
+
 \subsection{Obiettivo}
-L'obiettivo evidente è la risoluzione dell'equazione degli autovalori per l'Hamiltoniana, nel contesto dell'equazione di Schroedinger bidimensionale. La consegna non 
-lo rende esplicito ma si rende noto vengano richiesti sia gli autostati che gli autovalori.
+L'obiettivo è risolvere l'equazione agli autovalori per l'Hamiltoniana, nel contesto dell’equazione di Schrödinger bidimensionale. Sebbene la consegna non lo specifichi esplicitamente, è richiesto il calcolo sia degli autostati che degli autovalori:
 \begin{equation}
-    \hat{H}\ket{\psi}=E\ket{\psi}
+    H\psi=E\psi
 \end{equation}
-Dove con $\psi$ indichiamo l'autostato e con $E$ l'energia ad esso associato.
+dove $\psi$ rappresenta l'autostato ed $E$ l'energia corrispondente.
+
 \section{Implementazione Numerica dell'Hamiltoniana}
-L'Hamiltoniana associata al problema in questione, è generalmente:
+L’Hamiltoniana del problema in esame è generalmente espressa come:
 \begin{equation}
-    \hat{H} = -\frac{\hbar^2}{2m} \nabla^2 + V(x,y) = -\frac{\hbar^2}{2m} \left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}\right) + V(x,y)
+    H = -\frac{\hbar^2}{2m} \nabla^2 + V(x,y) = -\frac{\hbar^2}{2m} \left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}\right) + V(x,y)
 \end{equation}
-Il problema viene poi numericamente semplificato tramite la scelta di costanti naturali (o atomiche) adimensionali cioè
+Il problema viene numericamente semplificato scegliendo costanti adimensionali (sistema di unità naturali o atomiche), ovvero:
 \begin{equation}
     \hbar=1 \hspace{10pt} m=1
 \end{equation}
-da cui le energie risultanti associate agli autostati saranno in Hartree ($\approx 27.2eV$). \\ Considereremo un dominio rettangolare, di dimensioni 
-$L_x,L_y$ e discretizzato lungo ciascuna delle dimensioni in $N_x,N_y$ segmenti di lunghezza $h_x,h_y$. Indicheremo poi con $\psi_{i,j}$ l'elemento dell'autostato 
-rappresentato da un vettore di lunghezza $N_x * N_y$, atto ad "appiattire" il dominio, corrispondente alle coordinate $x=i*h_x,y=j*h_y$.
+Le energie risultanti saranno quindi espresse in Hartree ($\approx 27.2\,\text{eV}$).
+
+\subsection{Discretizzazione}
+Consideriamo un dominio rettangolare di dimensioni $L_x, L_y$, discretizzato lungo ciascuna delle due dimensioni in $N_x, N_y$ segmenti, di lunghezza $h_x, h_y$ rispettivamente. Indicheremo con $\psi_{i,j}$ l’elemento dell’autostato, rappresentato da un vettore di lunghezza $N_x \cdot N_y$, che “appiattisce” il dominio bidimensionale. L’indice $l$ è definito come $l = x + N_x \cdot y$ per indicizzare correttamente la griglia bidimensionale. \\
+
+Approssimiamo le derivate parziali nel modo seguente:
+\begin{equation}
+\frac{\partial^2 \psi_{i,j}}{\partial x^2}=\frac{\psi_{i-1,j}-2\psi_{i,j}+\psi_{i+1,j}}{h_x^2}
+\end{equation}
+e analogamente per la derivata seconda rispetto a $y$.
+
+Possiamo quindi riformulare $H\psi$ come:
+\begin{equation}
+    H\psi_{i,j} = -\frac{\psi_{i-1,j} - 2\psi_{i,j} + \psi_{i+1,j}}{2h_x^2}
+                 - \frac{\psi_{i,j-1} - 2\psi_{i,j} + \psi_{i,j+1}}{2h_y^2}
+                 + V_{i,j} \psi_{i,j}
+\end{equation}
+che può essere riscritto facilmente in forma matriciale. \\
+
+L’implementazione del potenziale è banale e viene dunque tralasciata. L’adattamento a un potenziale generico può essere effettuato tramite una funzione che, date le coordinate, restituisce il valore del potenziale nel punto. \\
+
+Vengono imposte condizioni al contorno periodiche, implementate facilmente tramite l’operatore modulo, che consente di accedere agli elementi della matrice "rientrando" dal lato opposto del dominio. \\
+
+Da tutte queste osservazioni si ricava che l’operatore Hamiltoniano è dato da:
+
+\begin{lstlisting}
+def H(nx: int,ny: int,hx: float,hy:float, V: Callable) -> np.ndarray:
+    size=nx*ny # Dimensione del vettore appiattito
+    hamil=np.zeros(shape=(size,size)) # Inizializzazione della matrice
+    hsqx=hx**2 # Precalcolo per maggiore efficienza
+    hsqy=hy**2
+    for i in range(0,size):
+        hamil[i][i]=(1/hsqx+1/hsqy+V(*Operators.l_to_coord(nx,ny,i),hx,hy)) # Diagonale: potenziale in funzione della posizione
+        hamil[i][(i-1)%size]=-1/(2*hsqx) #Condizioni periodiche sulle x
+        hamil[i][(i+1)%size]=-1/(2*hsqx)
+        hamil[i][(i+nx)%size]=-1/(2*hsqy) #Condizioni periodiche sulle y
+        hamil[i][(i-nx)%size]=-1/(2*hsqy)
+    return hamil
+\end{lstlisting}
+\subsection{Problema degli autovalori}
+Sono possibili diversi approcci alla risoluzione del problema degli autovalori, in questo caso è richiesta la risoluzione tramite minimizzazione del 
+funzionale di energia 
+\begin{equation}
+    E(\ket{\psi})=\bra{\psi} H \ket{\psi} - \lambda(\langle \psi|\psi \rangle-1)
+\end{equation}
+Utilizzando il moltiplicatore di Lagrange $\lambda$ come vincolo sulla normalizzazione della funzione d'onda. 
+Dalle condizioni di minimo $\frac{\partial E(\ket{\psi})}{\partial \bra{\psi}}=0=H\ket{\psi}-\lambda\ket{\psi}$ e $\frac{\partial E(\ket{\psi})}{\partial \lambda}=0=\langle \psi | \psi \rangle -1$ otteniamo la soluzione al nostro problema.
+\\ Il progetto contiene due diverse implementazioni di 
+questo funzionale:
+\begin{itemize}
+    \item \texttt{main\_laplacian.py}: minimizzazione effettuata con il funzionale completo anche del moltiplicatore di Lagrange
+    \item \texttt{main.py}: normalizzazione costretta all'interno della procedura di ortonormalizzazione di Gram-Schmidt, sperimentalmente più veloce e risultati identici, ma 
+matematicamente meno completa.
+\end{itemize}
+L'algoritmo di minimizzazione richiesto è il metodo del gradiente coniugato. Si tratta di un metodo di discesa del gradiente più costoso dal punto di vista computazionale rispetto al metodo standard dello steepest descent, ma che consente una convergenza più efficiente.
+Permette di generare le direzioni di ricerca in maniera tale che la minimizzazione lungo la direzione successiva non rovini le minimizzazioni lungo le direzioni precedenti.
+In questo caso è stata richiesto l'utilizzo dell'implementazione della libreria \texttt{scipy}.
 \end{document}

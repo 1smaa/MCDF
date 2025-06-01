@@ -10,15 +10,15 @@ class Operators(object):
         '''
         x,y=x*hx,y*hy
         L=5
-        if x<L: return 10
+        if x<L: return 0
         else: return 0
     
     @staticmethod
-    def coord_to_l(n: int,x: int,y: int) -> int:
+    def coord_to_l(nx: int,x: int,y: int) -> int:
         '''
         Trasformazione da coordinate a indice all'interno dell'autostato appiattito.
         '''
-        return n*y+x
+        return nx*y+x
     
     @staticmethod
     def l_to_coord(nx: int,ny: int,l: int) -> tuple:
@@ -39,9 +39,10 @@ class Operators(object):
         hsqx=hx**2 #Precalcolato per calcoli più efficienti
         hsqy=hy**2
         for i in range(0,size):
-            hamil[i][i]=(2/hsqx+2/hsqy+V(*Operators.l_to_coord(nx,ny,i),hx,hy)) #Sulla diagonale, potenziale calcolato in base ovviamente alla posizione
-            hamil[i][(i-1)%size]=-1/hsqx #Condizioni periodiche sulle x
-            hamil[i][(i+1)%size]=-1/hsqx
-            hamil[i][(i+nx)%size]=-1/hsqy #Condizioni periodiche sulle y
-            hamil[i][(i-nx)%size]=-1/hsqy
+            x,y=Operators.l_to_coord(nx,ny,i)
+            hamil[i][i]=(1/hsqx+1/hsqy+V(*Operators.l_to_coord(nx,ny,i),hx,hy)) #Sulla diagonale, potenziale calcolato in base ovviamente alla posizione
+            hamil[i][Operators.coord_to_l(nx,(x+1)%nx,y)]=-1/(2*hsqx) #Condizioni periodiche sulle x
+            hamil[i][Operators.coord_to_l(nx,(x-1)%nx,y)]=-1/(2*hsqx)
+            hamil[i][Operators.coord_to_l(nx,x,(y+1)%ny)]=-1/(2*hsqy) #Condizioni periodiche sulle y
+            hamil[i][Operators.coord_to_l(nx,x,(y-1)%ny)]=-1/(2*hsqy)
         return hamil
