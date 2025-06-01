@@ -6,13 +6,13 @@ from scipy.sparse.linalg import eigsh
 # Alberto ha l'oscilloscopio
 
 from src.utils import Operators
-NX=15
-NY=35
-LX=40
-LY=160
-HX=LX/NX
+NX=15 #Numero di punti lungo l'asse X
+NY=35 #Numero di punti lungo l'asse y 
+LX=40 #Lunghezza del lato del dominio lungo l'asse X
+LY=160 #Lunghezza del lato del dominio lungo l'asse Y
+HX=LX/NX 
 HY=LY/NY
-EIGEN_N=10
+EIGEN_N=10 #Numero di coppie autovalori/autostati da trovare
 
 def orthogonalize(psi, previous_states): 
     '''
@@ -56,7 +56,7 @@ def main() -> None:
         plt.title(f"Stato {i+1}, Autoenergia > {energy}")
         x,y=np.linspace(0,LX,NX),np.linspace(0,LY,NY) #Spazio delle coordinate
         X,Y=np.meshgrid(x,y) #Creazione della grid di base per il plot 3d
-        psi_matrix=np.zeros(shape=(NX,NY)) #Creazione della matrice di base dello stato, che è stato calcolato precedentemente in modo appiattito
+        psi_matrix=np.zeros(shape=(NX,NY)) #Creazione della matrice di base dello stato, che è stato calcolato precedentemente in modo "appiattito"
         for idx,value in enumerate(sol.x): #Trasformazione dell'autostato da vettore a matrice sulle coordinate
             x_p,y_p=Operators.l_to_coord(NX,NY,idx)
             psi_matrix[x_p][y_p]=np.abs(value)**2
