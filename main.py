@@ -6,13 +6,14 @@ from scipy.sparse.linalg import eigsh
 # Alberto ha l'oscilloscopio
 
 from src.utils import Operators
-NX=15 #Numero di punti lungo l'asse X
-NY=35 #Numero di punti lungo l'asse y 
+NX=20 #Numero di punti lungo l'asse X
+NY=20 #Numero di punti lungo l'asse y 
 LX=40 #Lunghezza del lato del dominio lungo l'asse X
-LY=160 #Lunghezza del lato del dominio lungo l'asse Y
+LY=40 #Lunghezza del lato del dominio lungo l'asse Y
 HX=LX/NX 
 HY=LY/NY
 EIGEN_N=10 #Numero di coppie autovalori/autostati da trovare
+M=9.10938356e-31 #Massa dell'elettrone in kg
 
 def orthogonalize(psi, previous_states): 
     '''
@@ -35,9 +36,9 @@ def energy_functional(psi: np.ndarray,H: np.ndarray,states: list[np.ndarray]) ->
 def main() -> None:
     states=[] #Record degli stati passati (per essere ortogonali agli stati precedenti)
     eigvals=[]
-    h=Operators.H(NX,NY,HX,HY,Operators.V) #Operatore Hamiltoniano
-    vals, vecs = eigsh(h, k=EIGEN_N, which='SM')
-    print(f"Double Check Eigenvlaues: {' '.join([str(round(eigval,3)) for eigval in vals])}")
+    h=Operators.H_sparse(NX,NY,HX,HY,Operators.V) #Operatore Hamiltoniano
+    #vals, vecs = eigsh(h, k=EIGEN_N, which='SM')
+    #print(f"Double Check Eigenvlaues: {' '.join([str(round(eigval,3)) for eigval in vals])}")
     for i in range(EIGEN_N): #Per i primi EIGEN_N autovalori richiesti
         psi_start = np.random.rand(NX*NY) #Crea uno stato random da cui partire
         psi_start /= np.linalg.norm(psi_start) #Normalizzalo
