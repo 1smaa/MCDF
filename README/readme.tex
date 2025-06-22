@@ -102,14 +102,22 @@ funzionale di energia
 \end{equation}
 Utilizzando il moltiplicatore di Lagrange $\lambda$ come vincolo sulla normalizzazione della funzione d'onda. 
 Dalle condizioni di minimo $\frac{\partial E(\ket{\psi})}{\partial \bra{\psi}}=0=H\ket{\psi}-\lambda\ket{\psi}$ e $\frac{\partial E(\ket{\psi})}{\partial \lambda}=0=\langle \psi | \psi \rangle -1$ otteniamo la soluzione al nostro problema.
-\\ Il progetto contiene due diverse implementazioni di 
-questo funzionale:
-\begin{itemize}
-    \item \texttt{main\_laplacian.py}: minimizzazione effettuata con il funzionale completo anche del moltiplicatore di Lagrange
-    \item \texttt{main.py}: normalizzazione costretta all'interno della procedura di ortonormalizzazione di Gram-Schmidt, sperimentalmente più veloce e risultati identici, ma 
-matematicamente meno completa.
-\end{itemize}
+\\
 L'algoritmo di minimizzazione richiesto è il metodo del gradiente coniugato. Si tratta di un metodo di discesa del gradiente più costoso dal punto di vista computazionale rispetto al metodo standard dello steepest descent, ma che consente una convergenza più efficiente.
 Permette di generare le direzioni di ricerca in maniera tale che la minimizzazione lungo la direzione successiva non rovini le minimizzazioni lungo le direzioni precedenti.
 In questo caso è stata richiesto l'utilizzo dell'implementazione della libreria \texttt{scipy}.
+\subsection{Verifica della soluzione}
+La soluzione analitica del problema è nota, e per semplificare i calcoli considereremo un potenziale nullo. In questo caso, gli autovalori sono dati da:
+\begin{equation}
+    E_{n_x,n_y} = 2\pi^2 \left( \frac{n_x^2}{L_x^2} + \frac{n_y^2}{L_y^2} \right)
+\end{equation}
+dove $n_x, n_y$ sono i numeri quantici associati alle dimensioni $x$ e $y$. Otteniamo così che i primi autovalori sono:
+\begin{align*}
+    E_{0,0} &= 0 \\ E_{1,0} &= 0.012 \\ E_{0,1} &= 0.012 \\ E_{1,1} &= 0.024 \\
+    E_{2,0} &= 0.048
+\end{align*}
+Nel caso dell'utilizzo di unità naturali. I valori invece ricavati dal nostro algoritmo sono:
+\texttt{Eigenvlaues: 0.0 0.012 0.012 0.012 0.012 0.024 0.024 0.024 0.024 0.048} \\ Possiamo attribuire la discrepanza in molteplicità degli autovalori 
+al fatto che traslazioni o rotazioni della funzione d'onda non ne modifichino l'energia, ma essendo ortogonali tra loro, non sono considerati come autostati distinti, 
+anche se fisicamente equivalenti.
 \end{document}

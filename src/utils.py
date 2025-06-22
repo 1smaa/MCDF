@@ -11,7 +11,7 @@ class Operators(object):
         '''
         x,y=x*hx,y*hy
         L=5
-        if x<L: return 10
+        if x<L: return 0
         else: return 0
     
     @staticmethod
