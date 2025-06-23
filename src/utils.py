@@ -10,8 +10,8 @@ class Operators(object):
         Definisce il potenziale utilizzato per i calcoli, in questo caso a gradino.
         '''
         x,y=x*hx,y*hy
-        L=5
-        if x<L: return 0
+        L=20
+        if x<L: return 50
         else: return 0
     
     @staticmethod

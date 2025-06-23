@@ -20,8 +20,8 @@ def orthogonalize(psi, previous_states):
     Procedura di ortonormalizzazione di Gram-Schmidt
     '''
     for phi in previous_states:
-        psi -= (np.vdot(phi, psi)/np.vdot(phi,phi)) * phi
-    psi /= np.linalg.norm(psi)
+        psi-=(np.vdot(phi, psi)/np.vdot(phi,phi)) * phi
+    psi/=np.linalg.norm(psi)
     return psi
 
 
@@ -47,8 +47,6 @@ def main() -> None:
                      method="CG", #Metodo del Gradiente Coniugato
                      options={"disp":False} #Non mostrare le statistiche di ottimizzazione (output più pulito)
                     ) 
-        #if len(states): print(f"Overlap {max([np.vdot(minimum,state) for state in states])}") #Pezzo tolto per verificare che effettivamente fosse ortogonale
-        #else: pass
         sol.x=orthogonalize(sol.x,states)
         states.append(sol.x) #Aggiungi al record di stati passati quello calcolato
         energy=sol.fun
